@@ -6,7 +6,8 @@ services:
     ports:
       - '3000:3000'  # Исправлено форматирование
     environment:
-      PORT: ${PORT}  # Исправлено форматирование
+      PORT: ${PORT}
+      DATABASE_URL: postgresql://4pjlst:28052004@host.docker.internal:5433/mydb?schema=public  # Адркс для призмы в коробке
     depends_on:
       - postgres
     restart: on-failure
