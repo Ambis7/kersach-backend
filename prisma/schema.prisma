@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
@@ -14,18 +14,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role { //Создвет типы ы призме енам если что
-  
+enum Role {
   DOCTOR
   ADMIN
-  
 }
+
 model User {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  name String
-  role      Role   @default(DOCTOR) // Например, "doctor", "admin"
+  name      String
+  role      Role     @default(DOCTOR) // Например, "doctor", "admin"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -33,40 +32,40 @@ model User {
 }
 
 model Patient {
-  id          String      @id @default(uuid())
-  fullName    String
-  birthDate   DateTime
+  id             String   @id @default(uuid())
+  fullName       String
+  birthDate      DateTime
   medicalHistory String? // История болезней
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   medicalReports MedicalReport[]
-  research Research[]
+  research       Research[]
 }
 
 model MedicalReport {
-  id            String      @id @default(uuid())
-  patientId     String
-  doctorId      String
-  reportType    String   @default("cardiology") // Тип отчета (кардиология)
-  diagnosis     String?
-  findings      Json     // Детали исследования (например, результаты ЭКГ)
-  conclusion    String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String   @id @default(uuid())
+  patientId  String
+  doctorId   String
+  reportType String   @default("cardiology") // Тип отчета (кардиология)
+  diagnosis  String?
+  findings   Json // Детали исследования (например, результаты ЭКГ)
+  conclusion String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  patient  Patient @relation(fields: [patientId], references: [id])
-  doctor   User    @relation(fields: [doctorId], references: [id])
+  patient Patient @relation(fields: [patientId], references: [id])
+  doctor  User    @relation(fields: [doctorId], references: [id])
 }
 
 model Research {
-  id          String      @id @default(uuid())
-  patientId   String
-  type        String   @default("ECG") // Тип исследования (ЭКГ, УЗИ и т.д.)
-  data        Json     // Данные исследования (например, графики, измерения)
-  status      String   @default("pending") // Статус: pending, completed, reviewed
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  patientId String
+  type      String   @default("ECG") // Тип исследования (ЭКГ, УЗИ и т.д.)
+  data      Json // Данные исследования (например, графики, измерения)
+  status    String   @default("pending") // Статус: pending, completed, reviewed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   patient Patient @relation(fields: [patientId], references: [id])
 }

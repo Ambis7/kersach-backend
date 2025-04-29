@@ -35,6 +35,13 @@ export class MedicalReportService {
     return report;
   }
 
+  async findByPatientId(patientId: string) {
+    return this.prisma.medicalReport.findMany({
+      where: { patientId },
+      include: { patient: true, doctor: true },
+    });
+  }
+
   async update(id: string, updateMedicalReportDto: UpdateMedicalReportDto) {
     if (updateMedicalReportDto.findings) {
       updateMedicalReportDto.findings = JSON.parse(

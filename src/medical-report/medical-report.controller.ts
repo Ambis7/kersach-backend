@@ -9,7 +9,6 @@ import {
   UseGuards,
   Request,
   Query,
-  ForbiddenException,
 } from '@nestjs/common';
 import { MedicalReportService } from './medical-report.service';
 import { CreateMedicalReportDto, UpdateMedicalReportDto } from './dto';
@@ -37,8 +36,6 @@ export class MedicalReportController {
     @Body() createMedicalReportDto: CreateMedicalReportDto,
     @Request() req,
   ) {
-    if (req.user.role !== 'DOCTOR')
-      throw new ForbiddenException('Doctors only');
     return this.medicalReportService.create(
       createMedicalReportDto,
       req.user.id,
@@ -71,6 +68,15 @@ export class MedicalReportController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Get('patient/:patientId')
+  @ApiOperation({ summary: 'Get medical reports by patient ID' })
+  @ApiResponse({ status: 200, description: 'List of reports for the patient' })
+  findByPatientId(@Param('patientId') patientId: string) {
+    return this.medicalReportService.findByPatientId(patientId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Put(':id')
   @ApiOperation({ summary: 'Update a medical report' })
   @ApiResponse({ status: 200, description: 'Report updated' })
@@ -78,10 +84,7 @@ export class MedicalReportController {
   update(
     @Param('id') id: string,
     @Body() updateMedicalReportDto: UpdateMedicalReportDto,
-    @Request() req,
   ) {
-    if (req.user.role !== 'DOCTOR')
-      throw new ForbiddenException('Doctors only');
     return this.medicalReportService.update(id, updateMedicalReportDto);
   }
 
@@ -91,9 +94,7 @@ export class MedicalReportController {
   @ApiOperation({ summary: 'Delete a medical report' })
   @ApiResponse({ status: 200, description: 'Report deleted' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  remove(@Param('id') id: string, @Request() req) {
-    if (req.user.role !== 'DOCTOR')
-      throw new ForbiddenException('Doctors only');
+  remove(@Param('id') id: string) {
     return this.medicalReportService.remove(id);
   }
 }

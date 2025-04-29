@@ -13,11 +13,22 @@ export class PatientService {
   }
 
   async findAll() {
-    return this.prisma.patient.findMany();
+    return this.prisma.patient.findMany({
+      include: {
+        medicalReports: true,
+        research: true,
+      },
+    });
   }
 
   async findOne(id: string) {
-    const patient = await this.prisma.patient.findUnique({ where: { id } });
+    const patient = await this.prisma.patient.findUnique({
+      where: { id },
+      include: {
+        medicalReports: true,
+        research: true,
+      },
+    });
     if (!patient) throw new NotFoundException('Patient not found');
     return patient;
   }

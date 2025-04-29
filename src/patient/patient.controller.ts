@@ -7,8 +7,6 @@ import {
   Delete,
   Put,
   UseGuards,
-  Request,
-  ForbiddenException,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { CreatePatientDto, UpdatePatientDto } from './dto';
@@ -30,8 +28,7 @@ export class PatientController {
   @Post()
   @ApiOperation({ summary: 'Create a new patient' })
   @ApiResponse({ status: 201, description: 'Patient created' })
-  create(@Body() createPatientDto: CreatePatientDto, @Request() req) {
-    if (req.user.role !== 'ADMIN') throw new ForbiddenException('Admins only');
+  create(@Body() createPatientDto: CreatePatientDto) {
     return this.patientService.create(createPatientDto);
   }
 
@@ -60,12 +57,7 @@ export class PatientController {
   @ApiOperation({ summary: 'Update a patient' })
   @ApiResponse({ status: 200, description: 'Patient updated' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  update(
-    @Param('id') id: string,
-    @Body() updatePatientDto: UpdatePatientDto,
-    @Request() req,
-  ) {
-    if (req.user.role !== 'ADMIN') throw new ForbiddenException('Admins only');
+  update(@Param('id') id: string, @Body() updatePatientDto: UpdatePatientDto) {
     return this.patientService.update(id, updatePatientDto);
   }
 
@@ -75,8 +67,7 @@ export class PatientController {
   @ApiOperation({ summary: 'Delete a patient' })
   @ApiResponse({ status: 200, description: 'Patient deleted' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  remove(@Param('id') id: string, @Request() req) {
-    if (req.user.role !== 'ADMIN') throw new ForbiddenException('Admins only');
+  remove(@Param('id') id: string) {
     return this.patientService.remove(id);
   }
 }

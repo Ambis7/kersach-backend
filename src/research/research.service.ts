@@ -30,6 +30,14 @@ export class ResearchService {
     if (!research) throw new NotFoundException('Research not found');
     return research;
   }
+  async findOneByPatientId(patientId: string) {
+    const research = await this.prisma.research.findFirst({
+      where: { patientId },
+      include: { patient: true },
+    });
+    if (!research) throw new NotFoundException('Research not found');
+    return research;
+  }
 
   async update(id: string, updateResearchDto: UpdateResearchDto) {
     if (updateResearchDto.data) {

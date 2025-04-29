@@ -7,9 +7,7 @@ import {
   Delete,
   Put,
   UseGuards,
-  Request,
   Query,
-  ForbiddenException,
 } from '@nestjs/common';
 import { ResearchService } from './research.service';
 import { CreateResearchDto, UpdateResearchDto } from './dto';
@@ -33,9 +31,7 @@ export class ResearchController {
   @ApiOperation({ summary: 'Create a new research' })
   @ApiResponse({ status: 201, description: 'Research created' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  create(@Body() createResearchDto: CreateResearchDto, @Request() req) {
-    if (req.user.role !== 'DOCTOR')
-      throw new ForbiddenException('Doctors only');
+  create(@Body() createResearchDto: CreateResearchDto) {
     return this.researchService.create(createResearchDto);
   }
 
@@ -51,6 +47,16 @@ export class ResearchController {
   })
   findAll(@Query('patientId') patientId?: string) {
     return this.researchService.findAll(patientId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get('patient')
+  @ApiOperation({ summary: 'Get research by patient ID' })
+  @ApiResponse({ status: 200, description: 'Research details' })
+  @ApiResponse({ status: 404, description: 'Research not found' })
+  findOneByPatientId(@Query('patientId') patientId: string) {
+    return this.researchService.findOneByPatientId(patientId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -72,10 +78,7 @@ export class ResearchController {
   update(
     @Param('id') id: string,
     @Body() updateResearchDto: UpdateResearchDto,
-    @Request() req,
   ) {
-    if (req.user.role !== 'DOCTOR')
-      throw new ForbiddenException('Doctors only');
     return this.researchService.update(id, updateResearchDto);
   }
 
@@ -85,9 +88,7 @@ export class ResearchController {
   @ApiOperation({ summary: 'Delete a research' })
   @ApiResponse({ status: 200, description: 'Research deleted' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  remove(@Param('id') id: string, @Request() req) {
-    if (req.user.role !== 'DOCTOR')
-      throw new ForbiddenException('Doctors only');
+  remove(@Param('id') id: string) {
     return this.researchService.remove(id);
   }
 }
